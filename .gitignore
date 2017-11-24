@@ -1,0 +1,17 @@
+# git ignore the following files
+
+*.pyc
+*.DS_Store
+
+# don't include the following projects
+autoencoder/
+autoencoder-visualize/
+autoencoder-denoiser/
+
+# don't upload mnist pickle files
+*.pkl
+*.gz
+
+# don't upload results
+dc-gan/output/
+dc-gan/tmp/
