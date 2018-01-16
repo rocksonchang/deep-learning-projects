@@ -12,7 +12,7 @@
 export TF_CPP_MIN_LOG_LEVEL=2
 
 MODEL="dc_gan"
-DATASET="mnistf"
+DATASET="mnist"
 export JOB_NAME="${MODEL}_${DATASET}_$(date +%Y%m%d_%H%M%S)"
 export JOB_DIR="./tmp/local_train_$JOB_NAME/"
 
