@@ -132,13 +132,14 @@ def save_image(fig, job_dir, fig_name):
         fig.savefig(fig_name)                 
         with file_io.FileIO(fig_name, mode='r') as input_f:
             with file_io.FileIO(job_dir + fig_name, mode='w') as output_f:
-                output_f.write(input_f.read())
+                output_f.write(input_f.read())    
 
 
 def moving_average(a, n=3):
     ret = np.cumsum(np.asarray(a, dtype=float))
     ret[n:] = ret[n:] - ret[:-n]
     return ret[n-1:]/n
+
 
 def plot_loss(loss_arr, job_dir, epoch):
     
@@ -154,7 +155,6 @@ def plot_loss(loss_arr, job_dir, epoch):
             d_loss.append(row[0])
             g_loss.append(row[1])
 
-
     x = np.linspace(0,epoch+1, len(d_loss))
     n=80
     fig, ax = plt.subplots(1,2,figsize=(10,5))
@@ -163,10 +163,9 @@ def plot_loss(loss_arr, job_dir, epoch):
     ax[0].set_title('Discriminator loss')
     ax[1].plot(x, g_loss)
     ax[1].plot(x[n-1:], moving_average(g_loss, n=n))
-    ax[1].set_title('GAN loss')
-    #fig_name = job_dir + "loss.png"  
-    #fig.savefig(fig_name) 
+    ax[1].set_title('GAN loss')    
     save_image(fig=fig, job_dir=job_dir, fig_name='loss')
+    plt.close(fig)
 
 
 def load_data(dataset, BUCKET_NAME, job_dir):
@@ -217,8 +216,8 @@ def train(BATCH_SIZE=128, dataset='mnist', BUCKET_NAME='rc_bucket',
     d_optim = SGD(lr=0.0005, momentum=0.9, nesterov=True)
     g_optim = SGD(lr=0.0005, momentum=0.9, nesterov=True)
     g.compile(loss='binary_crossentropy', optimizer="SGD")
-    d_on_g.compile(loss='binary_crossentropy', optimizer=g_optim)
-    d.trainable = True
+    d_on_g.compile(loss='binary_crossentropy', optimizer=g_optim)    
+    d.trainable = True    
     d.compile(loss='binary_crossentropy', optimizer=d_optim)
 
     ########## serialize model to JSON ##########
@@ -232,8 +231,7 @@ def train(BATCH_SIZE=128, dataset='mnist', BUCKET_NAME='rc_bucket',
         loss_arr = []
         print("Epoch is", epoch)
         print("Number of batches", int(x_train.shape[0]/BATCH_SIZE))
-        #for index in range(int(x_train.shape[0]/BATCH_SIZE)):                
-        for index in range(10):                
+        for index in range(int(x_train.shape[0]/BATCH_SIZE)):                        
             # train discriminator, evaluate discriminator
             noise = np.random.uniform(-1, 1, size=(BATCH_SIZE, 100))
             image_batch = x_train[index*BATCH_SIZE:(index+1)*BATCH_SIZE]
@@ -243,7 +241,8 @@ def train(BATCH_SIZE=128, dataset='mnist', BUCKET_NAME='rc_bucket',
                 image = image*127.5+127.5                
                 fig = plt.figure()
                 plt.imshow(image, cmap='Greys_r')                        
-                save_image(fig=fig, job_dir=job_dir, fig_name=str(epoch)+"_"+str(index))                
+                save_image(fig=fig, job_dir=job_dir, fig_name=str(epoch)+"_"+str(index))                                
+                plt.close(fig)
 
             x = np.concatenate((image_batch, generated_images))
             y = [1] * BATCH_SIZE + [0] * BATCH_SIZE
@@ -257,10 +256,12 @@ def train(BATCH_SIZE=128, dataset='mnist', BUCKET_NAME='rc_bucket',
 
             # store loss
             loss_arr.append([d_loss, g_loss])                        
-            print("epoch %d batch %d. d_loss: %f, g_loss: %f" % (epoch, index, d_loss, g_loss))            
+
+        #loss_arr = [[d_loss, g_loss]]
+        print("epoch %d batch %d. d_loss: %f, g_loss: %f" % (epoch, index, d_loss, g_loss))            
   
         ########## save loss and models ##########
-        save_loss(loss_arr, job_dir)        
+        save_loss(loss_arr , job_dir)        
         save_model(g, job_dir, 'generator')
         save_model(d, job_dir, 'discriminator')
         plot_loss(loss_arr, job_dir, epoch)
@@ -293,6 +294,7 @@ def generate(BATCH_SIZE, nice=False):
         image = combine_images(generated_images)
     image = image*127.5+127.5    
     save_image(image=image, job_dir='', fig_name="generated_image")    
+    plt.close(fig)
 
 
 def get_args():
@@ -300,7 +302,7 @@ def get_args():
 
     parser.add_argument("--mode", type=str)
     parser.add_argument("--batch_size", type=int, default=128)
-    parser.add_argument("--n_epochs", type=int, default=50)
+    parser.add_argument("--n_epochs", type=int, default=5)
     parser.add_argument("--dataset", type=str, default='mnist')
     parser.add_argument("--nice", dest="nice", action="store_true")
     parser.add_argument('--job-dir', help='GCS location to write checkpoints and export models', default=None)

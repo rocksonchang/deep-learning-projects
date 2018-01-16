@@ -12,7 +12,7 @@
 export TF_CPP_MIN_LOG_LEVEL=2
 
 MODEL="dc_gan"
-DATASET="mnistf"
+DATASET="mnist"
 export JOB_NAME="${MODEL}_${DATASET}_$(date +%Y%m%d_%H%M%S)"
 export JOB_DIR="./tmp/local_train_$JOB_NAME/"
 
@@ -29,7 +29,7 @@ gcloud ml-engine local train \
   --job-dir $JOB_DIR \
   --n_epochs 2 \
   --dataset $DATASET \
-  --BATCH_SIZE 128 
+  --BATCH_SIZE 128
 
 #  --job_id $JOB_NAME \
 

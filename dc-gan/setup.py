@@ -9,7 +9,7 @@ from setuptools import setup, find_packages
 
 REQUIRED_PACKAGES = [
                      'pyYaml>=3.12',
-                     'keras>=2.0',
+                     'keras==2.0.6',  # was crashing on ml-engine for keras>=2.0
                      'matplotlib',
 		             'h5py'
                      ]

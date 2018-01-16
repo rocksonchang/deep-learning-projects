@@ -12,7 +12,7 @@
 export TF_CPP_MIN_LOG_LEVEL=2
 
 MODEL="dc_gan"
-DATASET="mnistf"
+DATASET="mnist"
 export BUCKET_NAME="rc_bucket" 
 export JOB_NAME="${MODEL}_${DATASET}_$(date +%Y%m%d_%H%M%S)"
 export JOB_DIR=gs://$BUCKET_NAME/$JOB_NAME/
@@ -40,7 +40,7 @@ gcloud ml-engine jobs submit training $JOB_NAME \
   --region $REGION \
   --config=trainer/cloudml-gpu.yaml \
   -- \
-  --n_epochs 5 \
+  --n_epochs 40 \
   --dataset $DATASET \
   --BATCH_SIZE 128 
 
