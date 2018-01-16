@@ -228,7 +228,7 @@ def train(BATCH_SIZE=128, dataset='mnist', BUCKET_NAME='rc_bucket',
     ########## train GAN ##########
     print("Training GAN")
     for epoch in range(n_epochs):
-        loss_arr = []
+        #loss_arr = []
         print("Epoch is", epoch)
         print("Number of batches", int(x_train.shape[0]/BATCH_SIZE))
         for index in range(int(x_train.shape[0]/BATCH_SIZE)):                        
@@ -257,7 +257,6 @@ def train(BATCH_SIZE=128, dataset='mnist', BUCKET_NAME='rc_bucket',
             # store loss
             loss_arr.append([d_loss, g_loss])                        
 
-        #loss_arr = [[d_loss, g_loss]]
         print("epoch %d batch %d. d_loss: %f, g_loss: %f" % (epoch, index, d_loss, g_loss))            
   
         ########## save loss and models ##########
