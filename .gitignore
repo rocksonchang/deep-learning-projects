@@ -4,7 +4,7 @@
 *.DS_Store
 
 # don't include the following projects
-autoencoder/
+#autoencoder/
 autoencoder-visualize/
 autoencoder-denoiser/
 
@@ -13,5 +13,7 @@ autoencoder-denoiser/
 *.gz
 
 # don't upload results
-dc-gan/output/
-dc-gan/tmp/
+#dc-gan/output/
+#dc-gan/tmp/
+*/output/
+*/tmp/
