@@ -11,7 +11,7 @@
 # see: https://github.com/tensorflow/tensorflow/issues/7778
 export TF_CPP_MIN_LOG_LEVEL=2
 
-MODEL="dc_gan"
+MODEL="dcgan"
 DATASET="mnist"
 export BUCKET_NAME="rc_bucket" 
 export JOB_NAME="${MODEL}_${DATASET}_$(date +%Y%m%d_%H%M%S)"
@@ -23,16 +23,6 @@ echo ""
 echo "job dir = $JOB_DIR"
 echo "job name = $JOB_NAME"
 
-# Make bucket
-# gsutil mb -l us-east1 $JOB_DIR 
-# gsutil -m rm -rf gs://$BUCKET_NAME/$JOB_NAME
-
-# Copy fashion mnist data to bucket.
-# See https://cloud.google.com/ml-engine/docs/getting-started-training-prediction
-# export gsutil cp -r ../data gs://$BUCKET_NAME/data
-# alternatively, from shell $ gsutil cp -r ../data gs://$BUCKET_NAME/data
-
-
 gcloud ml-engine jobs submit training $JOB_NAME \
   --module-name trainer.task \
   --job-dir $JOB_DIR \
@@ -40,7 +30,7 @@ gcloud ml-engine jobs submit training $JOB_NAME \
   --region $REGION \
   --config=trainer/cloudml-gpu.yaml \
   -- \
-  --n_epochs 40 \
+  --n_epochs 50 \
   --dataset $DATASET \
   --BATCH_SIZE 128 
 

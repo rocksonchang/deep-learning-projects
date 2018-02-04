@@ -194,7 +194,7 @@ def load_data(dataset, BUCKET_NAME, job_dir):
 
 
 def train(BATCH_SIZE=128, dataset='mnist', BUCKET_NAME='rc_bucket', 
-          n_epochs=50, job_dir='tmp/', **kwargs):
+          n_epochs=50, job_dir='tmp/', smoothing=True, **kwargs):
 
     ########## File structure prep ##########    
     if 'gs://' not in job_dir:
@@ -215,7 +215,7 @@ def train(BATCH_SIZE=128, dataset='mnist', BUCKET_NAME='rc_bucket',
     d_on_g = generator_containing_discriminator(g, d)
     d_optim = SGD(lr=0.0005, momentum=0.9, nesterov=True)
     g_optim = SGD(lr=0.0005, momentum=0.9, nesterov=True)
-    g.compile(loss='binary_crossentropy', optimizer="SGD")
+    #g.compile(loss='binary_crossentropy', optimizer="SGD") # don't need directly compile this?
     d_on_g.compile(loss='binary_crossentropy', optimizer=g_optim)    
     d.trainable = True    
     d.compile(loss='binary_crossentropy', optimizer=d_optim)
@@ -244,14 +244,19 @@ def train(BATCH_SIZE=128, dataset='mnist', BUCKET_NAME='rc_bucket',
                 save_image(fig=fig, job_dir=job_dir, fig_name=str(epoch)+"_"+str(index))                                
                 plt.close(fig)
 
+
+            if smoothing:
+                target = 0.9
+            else:
+                target = 1.0
             x = np.concatenate((image_batch, generated_images))
-            y = [1] * BATCH_SIZE + [0] * BATCH_SIZE
+            y = [target] * BATCH_SIZE + [0] * BATCH_SIZE
             d_loss = d.train_on_batch(x, y)                        
 
             # train generator, evaluate on full stack            
             noise = np.random.uniform(-1, 1, (BATCH_SIZE, 100))
             d.trainable = False
-            g_loss = d_on_g.train_on_batch(noise, [1] * BATCH_SIZE)
+            g_loss = d_on_g.train_on_batch(noise, [target] * BATCH_SIZE)
             d.trainable = True
 
             # store loss

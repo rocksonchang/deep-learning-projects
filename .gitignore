@@ -5,6 +5,7 @@
 
 # don't include the following projects
 #autoencoder/
+w-gan/
 autoencoder-visualize/
 autoencoder-denoiser/
 
