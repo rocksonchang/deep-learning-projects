@@ -6,6 +6,7 @@
 # don't include the following projects yet
 
 w-gan/
+autoencoder
 #autoencoder-visualize/
 #autoencoder-denoiser/
 
