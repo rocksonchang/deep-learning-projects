@@ -3,18 +3,16 @@
 *.pyc
 *.DS_Store
 
-# don't include the following projects
+# don't include the following projects yet
 
 w-gan/
-autoencoder-visualize/
-autoencoder-denoiser/
+#autoencoder-visualize/
+#autoencoder-denoiser/
 
 # don't upload mnist pickle files
 *.pkl
 *.gz
 
 # don't upload results
-#dc-gan/output/
-#dc-gan/tmp/
 */output/
 */tmp/
